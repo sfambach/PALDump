@@ -70,6 +70,12 @@ typedef struct {
 #define PROBEPORT PORTG
 #define PROBEPIN 2
 
+// 1 = PALDump shield (one 24-pin ZIF socket, see README), 0 = original breadboard wiring (PORTA/PORTC/PORTK)
+#ifndef PALDUMP_SHIELD
+#define PALDUMP_SHIELD 1
+#endif
+const bool shieldLayout = PALDUMP_SHIELD;
+
 
 class PALDump {
 
@@ -109,7 +115,7 @@ class PALDump {
     enum triState:uint8_t {Low = 0, High = 1, HiZ = 3};
     enum PALType:uint8_t {PAL16L8 = 0, PAL20L8 = 1};
 
-    PALDump(PALType type, volatile uint8_t *port1, volatile uint8_t *port2, volatile uint8_t *port3, uint8_t maxTries = 1);
+    PALDump(PALType type, uint8_t maxTries = 1);
 /*
     void getCombinatorialOutputAsText(uint32_t combination, char *buffer);
     void getCombinatorialOutputAsText(char *buffer);
@@ -132,7 +138,35 @@ class PALDump {
     void assumeSimple14i8o();
     const char *pinType(PALDump::palPinType t);
   private:
-    volatile uint8_t *HWPort1, *HWPort2, *HWPort3;
+    uint8_t p3Shadow;
+    void initPorts();
+    inline void p1Write(uint8_t v) { PORTA = v; }
+    inline void p2Write(uint8_t v) {
+      if(shieldLayout && currentPALType == PAL16L8) {
+        PORTC = (PORTC & 0b11111110) | (v & 1);
+        PORTK = (PORTK & 0b11111110) | ((v >> 1) & 1);
+      }
+      else if(shieldLayout) PORTC = (PORTC & 0b11000000) | (v & 0b00111111);
+      else PORTC = v;
+    }
+    inline void p3Write(uint8_t v) {
+      if(shieldLayout && currentPALType == PAL16L8) {
+        PORTK = (PORTK & 1) | (v << 1);
+        if(v & 0x80) PORTC |= 0b00010000; else PORTC &= 0b11101111;
+      }
+      else PORTK = v;
+    }
+    inline void p3Ddr(uint8_t v) {
+      if(shieldLayout && currentPALType == PAL16L8) {
+        DDRK = 1 | (v << 1);
+        if(v & 0x80) DDRC |= 0b00010000; else DDRC &= 0b11101111;
+      }
+      else DDRK = v;
+    }
+    inline uint8_t p3Read() {
+      if(shieldLayout && currentPALType == PAL16L8) return (PINK >> 1) | ((PINC & 0b00010000) << 3);
+      return PINK;
+    }
     PALType currentPALType;
     uint8_t currentPalPin; // Then pin being tested/read
     uint8_t posMask; // Mask for the PAL pin being read

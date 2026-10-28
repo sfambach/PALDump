@@ -14,17 +14,25 @@
  Author: Dmitry Shtatnov (shtatnovda@yandex.ru)
  Date of initial publication: 25.02.2024
  Licence: CC BY-NC-SA 4.0 Deed
+
+ PALDump shield support (one 24-pin ZIF socket, 20/24 switch on D40, RUN LED on D41):
+ Stefan Fambach (SteFam), https://www.fambach.net, with Claude (Anthropic AI), 2026.
+ Same licence (CC BY-NC-SA 4.0). See README.md, section "Shield".
  */
 
 
-/* Uncomment one of the lines according to your needs */
+/* Original wiring (PALDUMP_SHIELD 0 in PALDump.h): uncomment one of the lines according to your needs.
+   On the shield the 20/24 switch selects the type and this setting is ignored. */
+#ifndef GLOBAL_PAL_TYPE
 #define GLOBAL_PAL_TYPE PAL16L8
 //#define GLOBAL_PAL_TYPE PAL20L8
+#endif
 
-// Three complete ([7..0]) ports, free of shared functions:
-#define GLOBAL_PORT1 PORTA
-#define GLOBAL_PORT2 PORTC
-#define GLOBAL_PORT3 PORTK
+// Ports used (fixed in PALDump.h): PORTA, PORTC, PORTK
+
+// Shield: 20/24 switch on PG1 (D40, LOW = 20-pin), RUN LED on PG0 (D41)
+#define MODE_BIT 1
+#define RUN_LED_BIT 0
 
 /*
 The probe port is defined in PALDump.h.
@@ -35,10 +43,19 @@ Default:
 */
 
 
-const PALDump::PALType globalPALType = PALDump::GLOBAL_PAL_TYPE;
+// Runs before setup(), because the PALDump object below is built with the type.
+PALDump::PALType readPALType() {
+  if(!shieldLayout) return PALDump::GLOBAL_PAL_TYPE;
+  DDRG &= ~(1 << MODE_BIT);
+  PORTG |= 1 << MODE_BIT;  // pull-up, the switch pulls to GND in position "20"
+  for(volatile uint8_t i = 0; i < 100; i++);
+  return (PING & (1 << MODE_BIT)) ? PALDump::PAL20L8 : PALDump::PAL16L8;
+}
+
+const PALDump::PALType globalPALType = readPALType();
 
 // A single instance of the PALDump object
-PALDump PLA(globalPALType, &GLOBAL_PORT1, &GLOBAL_PORT2, &GLOBAL_PORT3, 1);
+PALDump PLA(globalPALType, 1);
 
 uint32_t totalCombinations;
 uint8_t totalInputs;
@@ -56,6 +73,12 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   Serial.println("# PAL Reader by Dmitry Shtatnov. Version 1.3");
+  if(shieldLayout) {
+    DDRG |= 1 << RUN_LED_BIT;
+    PORTG |= 1 << RUN_LED_BIT;
+    Serial.println(globalPALType == PALDump::PAL16L8 ? "# PALDump shield, switch on 20 pin: PAL16L8 / PAL10L8 mode"
+                                                     : "# PALDump shield, switch on 24 pin: PAL20L8 mode");
+  }
  
 // Full analysis. Time-consuming for PAL20L8
    PLA.analyzePAL();
@@ -73,6 +96,8 @@ void setup() {
 
   print_berkeley_header();
   print_full_berkeley();
+  if(shieldLayout) PORTG &= ~(1 << RUN_LED_BIT);
+  Serial.println("# Done.");
 }
 
 //#pragma GCC optimize ("-O0")

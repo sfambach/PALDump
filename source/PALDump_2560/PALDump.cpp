@@ -1,17 +1,13 @@
 #include "PALDump.h"
 
-PALDump::PALDump(PALType type, volatile uint8_t *port1,volatile  uint8_t *port2, volatile uint8_t *port3, uint8_t maxTries) {
+PALDump::PALDump(PALType type, uint8_t maxTries) {
   if(maxTries > 4) maxTries = 4;
   if(maxTries < 1) maxTries = 1;
   maxRedundantReads = maxTries;
-  HWPort1 = port1;
-  HWPort2 = port2;
-  HWPort3 = port3;
   currentPALType = type;
   currentCombination = 0;
-  DDR(*HWPort1) = 255; // Output
-  DDR(*HWPort2) = 255; // Output
-  DDR(*HWPort3) = 0; // Input
+  p3Shadow = 0;
+  initPorts();
   for(uint8_t pin = 0; pin<8; pin++) {
     palPinConfig[pin] = Unknown;
   }
@@ -54,32 +50,31 @@ char PALDump::readPALPin(uint32_t combination, uint8_t bit) {
   negMask = posMask ^ 255;
   switch(currentPALType) {
     case PAL16L8:
-      *HWPort1 = BYTE1(combination);
-      *HWPort2 = BYTE2(combination) & 0b00000011;
-      *HWPort3 = BYTE2(combination)>>1;
+      p1Write(BYTE1(combination));
+      p2Write(BYTE2(combination) & 0b00000011);
+      p3Shadow = BYTE2(combination)>>1;
       break;
     case PAL20L8:
       uint16_t ccopy;
       LO8(ccopy) = BYTE2(combination);
       HI8(ccopy) = BYTE3(combination);
       ccopy <<= 3;
-      *HWPort1 = BYTE1(combination);
-      *HWPort2 = BYTE2(combination);
-      *HWPort3 = HI8(ccopy);
+      p1Write(BYTE1(combination));
+      p2Write(BYTE2(combination));
+      p3Shadow = HI8(ccopy);
       break;
   }
-  *HWPort3 &= IOMask;
-  *HWPort3 &= negMask;
-  DDR(*HWPort3) = IOMask & negMask;
+  p3Write(p3Shadow & IOMask & negMask);
+  p3Ddr(IOMask & negMask);
   
   DDR(PROBEPORT) |= 1<<PROBEPIN;
   PROBEPORT |= 1<<PROBEPIN;
-  if((PIN(*HWPort3)&posMask) == 0) res = '0';
+  if((p3Read()&posMask) == 0) res = '0';
   PROBEPORT &= (1<<PROBEPIN)^255;
-  if((PIN(*HWPort3)&posMask) != 0) res = '1';
+  if((p3Read()&posMask) != 0) res = '1';
   DDR(PROBEPORT) &= (1<<PROBEPIN) ^ 255;
-  DDR(*HWPort3) = 0;
-  *HWPort3 = 0;
+  p3Ddr(0);
+  p3Write(0);
   return res;
 }
 /*
@@ -255,8 +250,8 @@ PALDump::PALWord PALDump::getPort(uint32_t combination) {
   res.port = 0xffff;
   switch(currentPALType) {
     case PAL16L8:
-      *HWPort1 = LO8(combination);
-      *HWPort2 = HI8(combination);
+      p1Write(LO8(combination));
+      p2Write(HI8(combination));
       p3Template = (HI8(combination)>>1) & DIR_PAL16L8;
       break;
     case PAL20L8:
@@ -264,8 +259,8 @@ PALDump::PALWord PALDump::getPort(uint32_t combination) {
       LO8(ccopy) = BYTE2(combination);
       HI8(ccopy) = BYTE3(combination);
       ccopy <<= 3;
-      *HWPort1 = BYTE1(combination);
-      *HWPort2 = BYTE2(combination);
+      p1Write(BYTE1(combination));
+      p2Write(BYTE2(combination));
       p3Template = HI8(ccopy);
       break;
   }
@@ -274,88 +269,88 @@ PALDump::PALWord PALDump::getPort(uint32_t combination) {
 
   /* Intentionally made with no loops for better performance! */
   // bit 7
-  *HWPort3 = 0b01111111 & p3Template;
-  DDR(*HWPort3) = 0b01111111 & DIR_PAL16L8;
+  p3Write(0b01111111 & p3Template);
+  p3Ddr(0b01111111 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b10000000) == 0) res.oe8 = 0;
+  if((p3Read()&0b10000000) == 0) res.oe8 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b10000000) != 0) res.output8 = 0;
+  if((p3Read()&0b10000000) != 0) res.output8 = 0;
 
   // bit 6
-  *HWPort3 = 0b10111111 & p3Template;
-  DDR(*HWPort3) = 0b10111111 & DIR_PAL16L8;
+  p3Write(0b10111111 & p3Template);
+  p3Ddr(0b10111111 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b01000000) == 0) res.oe7 = 0;
+  if((p3Read()&0b01000000) == 0) res.oe7 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b01000000) != 0) res.output7 = 0;
+  if((p3Read()&0b01000000) != 0) res.output7 = 0;
 
   // bit 5
-  *HWPort3 = 0b11011111 & p3Template;
-  DDR(*HWPort3) = 0b11011111 & DIR_PAL16L8;
+  p3Write(0b11011111 & p3Template);
+  p3Ddr(0b11011111 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b00100000) == 0) res.oe6 = 0;
+  if((p3Read()&0b00100000) == 0) res.oe6 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b00100000) != 0) res.output6 = 0;
+  if((p3Read()&0b00100000) != 0) res.output6 = 0;
 
   // bit 4
-  *HWPort3 = 0b11101111 & p3Template;
-  DDR(*HWPort3) = 0b11101111 & DIR_PAL16L8;
+  p3Write(0b11101111 & p3Template);
+  p3Ddr(0b11101111 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b00010000) == 0) res.oe5 = 0;
+  if((p3Read()&0b00010000) == 0) res.oe5 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b00010000) != 0) res.output5 = 0;
+  if((p3Read()&0b00010000) != 0) res.output5 = 0;
 
   // bit 3
-  *HWPort3 = 0b11110111 & p3Template;
-  DDR(*HWPort3) = 0b11110111 & DIR_PAL16L8;
+  p3Write(0b11110111 & p3Template);
+  p3Ddr(0b11110111 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b00001000) == 0) res.oe4 = 0;
+  if((p3Read()&0b00001000) == 0) res.oe4 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b00001000) != 0) res.output4 = 0;
+  if((p3Read()&0b00001000) != 0) res.output4 = 0;
 
   // bit 2
-  *HWPort3 = 0b11111011 & p3Template;
-  DDR(*HWPort3) = 0b11111011 & DIR_PAL16L8;
+  p3Write(0b11111011 & p3Template);
+  p3Ddr(0b11111011 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b00000100) == 0) res.oe3 = 0;
+  if((p3Read()&0b00000100) == 0) res.oe3 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b00000100) != 0) res.output3 = 0;
+  if((p3Read()&0b00000100) != 0) res.output3 = 0;
 
   // bit 1
-  *HWPort3 = 0b11111101 & p3Template;
-  DDR(*HWPort3) = 0b11111101 & DIR_PAL16L8;
+  p3Write(0b11111101 & p3Template);
+  p3Ddr(0b11111101 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b00000010) == 0) res.oe2 = 0;
+  if((p3Read()&0b00000010) == 0) res.oe2 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b00000010) != 0) res.output2 = 0;
+  if((p3Read()&0b00000010) != 0) res.output2 = 0;
 
   // bit 0
-  *HWPort3 = 0b11111110 & p3Template;
-  DDR(*HWPort3) = 0b11111110 & DIR_PAL16L8;
+  p3Write(0b11111110 & p3Template);
+  p3Ddr(0b11111110 & DIR_PAL16L8);
   PROBEPORT |= 1<<PROBEPIN;
   NOP;
-  if((PIN(*HWPort3)&0b00000001) == 0) res.oe1 = 0;
+  if((p3Read()&0b00000001) == 0) res.oe1 = 0;
   PROBEPORT &= (1<<PROBEPIN)^255;
   NOP;
-  if((PIN(*HWPort3)&0b00000001) != 0) res.output1 = 0;
+  if((p3Read()&0b00000001) != 0) res.output1 = 0;
 
   DDR(PROBEPORT) &= (1<<PROBEPIN) ^ 255;
-  DDR(*HWPort3) = 0;
-  *HWPort3 = 0;
+  p3Ddr(0);
+  p3Write(0);
 
   return res;
 }
@@ -393,4 +388,26 @@ PALDump::palPinType *PALDump::getPALConfig() {
 const char *PALDump::pinType(PALDump::palPinType t) {
   const char * names[4] = {"Output", "Tri-state Output", "Input", "Unknown"};
   return names[(uint8_t)t];
+}
+
+/*
+ * Port layer (added for the PALDump shield by Stefan Fambach, see README "Shield").
+ * The analysis works on three virtual 8-bit ports: P1 and P2 drive PAL inputs, P3 holds the eight pins that can be
+ * outputs. On the original wiring they are PORTA, PORTC and PORTK one to one. The shield has a single 24-pin ZIF
+ * socket and a 20-pin PAL sits flush with pin 1, so for PAL16L8 the pins above 10 move up by four contacts:
+ *
+ *   PAL16L8 on the shield:  P1 -> PORTA,  P2.0 -> PC0 (pin 9),  P2.1 -> PK0 (pin 11),
+ *                           P3.0..6 -> PK1..PK7 (pins 12-18),  P3.7 -> PC4 (pin 19)
+ *   PAL20L8 on the shield:  P1 -> PORTA,  P2.0..5 -> PC0..PC5,  P3 -> PORTK  (same as the original wiring)
+ */
+void PALDump::initPorts() {
+  DDRA = 0xff;
+  if(shieldLayout && currentPALType == PAL16L8) {
+    DDRC = 0b00000001; PORTC = 0;  // PC1-PC3, PC5: contacts 10/11/13/14 have no 20-pin PAL pin
+    DDRK = 0b00000001; PORTK = 0;  // PK0 = pin 11 (input I10)
+  }
+  else {
+    DDRC = shieldLayout ? 0b00111111 : 0xff;
+    DDRK = 0;
+  }
 }

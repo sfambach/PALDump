@@ -1,0 +1,302 @@
+(kicad_symbol_lib
+  (version 20220914)
+  (generator kicad_symbol_editor)
+  (symbol "ZIF24_PAL"
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U"
+      (at 0 17.78 0)
+      (effects
+        (font
+          (size 1.27 1.27))))
+    (property "Value" "ZIF24_PAL"
+      (at 0 -17.78 0)
+      (effects
+        (font
+          (size 1.27 1.27))))
+    (property "Footprint" ""
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27))
+        hide))
+    (property "Datasheet" "~"
+      (at 0 0 0)
+      (effects
+        (font
+          (size 1.27 1.27))
+        hide))
+    (symbol "ZIF24_PAL_0_1"
+      (rectangle
+        (start -10.16 16.51)
+        (end 10.16 -16.51)
+        (stroke
+          (width 0.254)
+          (type default))
+        (fill
+          (type background))))
+    (symbol "ZIF24_PAL_1_1"
+      (pin bidirectional line
+        (at -12.7 13.97 0)
+        (length 2.54)
+        (name "I1/I0"
+          (effects
+            (font
+              (size 1 1))))
+        (number "1"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 11.43 0)
+        (length 2.54)
+        (name "I2/I1"
+          (effects
+            (font
+              (size 1 1))))
+        (number "2"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 8.89 0)
+        (length 2.54)
+        (name "I3/I2"
+          (effects
+            (font
+              (size 1 1))))
+        (number "3"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 6.35 0)
+        (length 2.54)
+        (name "I4/I3"
+          (effects
+            (font
+              (size 1 1))))
+        (number "4"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 3.81 0)
+        (length 2.54)
+        (name "I5/I4"
+          (effects
+            (font
+              (size 1 1))))
+        (number "5"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 1.27 0)
+        (length 2.54)
+        (name "I6/I5"
+          (effects
+            (font
+              (size 1 1))))
+        (number "6"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 -1.27 0)
+        (length 2.54)
+        (name "I7/I6"
+          (effects
+            (font
+              (size 1 1))))
+        (number "7"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 -3.81 0)
+        (length 2.54)
+        (name "I8/I7"
+          (effects
+            (font
+              (size 1 1))))
+        (number "8"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 -6.35 0)
+        (length 2.54)
+        (name "I9/I8"
+          (effects
+            (font
+              (size 1 1))))
+        (number "9"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 -8.89 0)
+        (length 2.54)
+        (name "GND/I9"
+          (effects
+            (font
+              (size 1 1))))
+        (number "10"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at -12.7 -11.43 0)
+        (length 2.54)
+        (name "-/I10"
+          (effects
+            (font
+              (size 1 1))))
+        (number "11"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin power_in line
+        (at -12.7 -13.97 0)
+        (length 2.54)
+        (name "GND"
+          (effects
+            (font
+              (size 1 1))))
+        (number "12"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 -13.97 180)
+        (length 2.54)
+        (name "-/I13"
+          (effects
+            (font
+              (size 1 1))))
+        (number "13"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 -11.43 180)
+        (length 2.54)
+        (name "-/I11"
+          (effects
+            (font
+              (size 1 1))))
+        (number "14"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 -8.89 180)
+        (length 2.54)
+        (name "I10/O1"
+          (effects
+            (font
+              (size 1 1))))
+        (number "15"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 -6.35 180)
+        (length 2.54)
+        (name "O1/IO2"
+          (effects
+            (font
+              (size 1 1))))
+        (number "16"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 -3.81 180)
+        (length 2.54)
+        (name "IO2/IO3"
+          (effects
+            (font
+              (size 1 1))))
+        (number "17"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 -1.27 180)
+        (length 2.54)
+        (name "IO3/IO4"
+          (effects
+            (font
+              (size 1 1))))
+        (number "18"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 1.27 180)
+        (length 2.54)
+        (name "IO4/IO5"
+          (effects
+            (font
+              (size 1 1))))
+        (number "19"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 3.81 180)
+        (length 2.54)
+        (name "IO5/IO6"
+          (effects
+            (font
+              (size 1 1))))
+        (number "20"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 6.35 180)
+        (length 2.54)
+        (name "IO6/IO7"
+          (effects
+            (font
+              (size 1 1))))
+        (number "21"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 8.89 180)
+        (length 2.54)
+        (name "IO7/O8"
+          (effects
+            (font
+              (size 1 1))))
+        (number "22"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin bidirectional line
+        (at 12.7 11.43 180)
+        (length 2.54)
+        (name "O8/I12"
+          (effects
+            (font
+              (size 1 1))))
+        (number "23"
+          (effects
+            (font
+              (size 1 1)))))
+      (pin power_in line
+        (at 12.7 13.97 180)
+        (length 2.54)
+        (name "VCC"
+          (effects
+            (font
+              (size 1 1))))
+        (number "24"
+          (effects
+            (font
+              (size 1 1))))))))

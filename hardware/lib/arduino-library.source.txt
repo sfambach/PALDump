@@ -1,0 +1,2 @@
+1075811e04a7a0ec7645a3590f179655e027c650 Sun Sep 3 16:55:19 2023 +0100
+https://github.com/Alarm-Siren/arduino-kicad-library (CC BY-SA 4.0)

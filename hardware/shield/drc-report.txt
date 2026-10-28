@@ -1,0 +1,107 @@
+** Drc report for /home/user/paldump/hardware/shield/paldump-shield.kicad_pcb **
+** Created on 2026-10-28 21:58:11 **
+
+** Found 28 DRC violations **
+[silk_overlap]: Silkscreen overlap
+    Rule: board setup constraints silk; Severity: warning
+    @(138.5500 mm, 125.6700 mm): Line on F.Silkscreen
+    @(120.6500 mm, 123.2000 mm): Circle on F.Silkscreen
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; Severity: warning
+    @(150.0000 mm, 125.0000 mm): PCB Text 'PALDump shield v0.1 - fambach.net' on B.Silkscreen
+[silk_over_copper]: Silkscreen clipped by solder mask
+    Local override; Severity: warning
+    @(150.0000 mm, 127.5000 mm): PCB Text 'github.com/sfambach/PALDump' on B.Silkscreen
+[starved_thermal]: Thermal relief connection to zone incomplete (zone min spoke count 2; actual 1)
+    Local override; Severity: error
+    @(100.5000 mm, 100.5000 mm): Zone [GND] on B.Cu
+    @(154.9400 mm, 120.0000 mm): PTH pad 12 [GND] of U1
+[lib_footprint_issues]: The current configuration does not include the library 'Package_DIP'.
+    Local override; Severity: warning
+    @(142.2400 mm, 134.6200 mm): Footprint RN3
+[lib_footprint_issues]: The current configuration does not include the library 'Button_Switch_THT'.
+    Local override; Severity: warning
+    @(130.8100 mm, 140.9700 mm): Footprint S2
+[lib_footprint_issues]: The current configuration does not include the library 'Package_DIP'.
+    Local override; Severity: warning
+    @(119.3800 mm, 134.6200 mm): Footprint RN1
+[lib_footprint_issues]: The current configuration does not include the library 'Resistor_THT'.
+    Local override; Severity: warning
+    @(151.1300 mm, 144.7800 mm): Footprint R2
+[lib_footprint_issues]: The current configuration does not include the library 'Resistor_THT'.
+    Local override; Severity: warning
+    @(151.1300 mm, 139.7000 mm): Footprint R1
+[lib_footprint_issues]: The current configuration does not include the library 'Package_DIP'.
+    Local override; Severity: warning
+    @(177.8000 mm, 124.4600 mm): Footprint RN2
+[lib_footprint_issues]: The current configuration does not include the library 'LED_THT'.
+    Local override; Severity: warning
+    @(146.6850 mm, 143.5100 mm): Footprint D2
+[lib_footprint_issues]: The current configuration does not include the library 'Socket'.
+    Local override; Severity: warning
+    @(127.0000 mm, 120.0000 mm): Footprint U1
+[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_THT'.
+    Local override; Severity: warning
+    @(170.1800 mm, 137.1600 mm): Footprint C1
+[lib_footprint_issues]: The current configuration does not include the library 'Capacitor_THT'.
+    Local override; Severity: warning
+    @(180.3400 mm, 137.1600 mm): Footprint C2
+[lib_footprint_issues]: The current configuration does not include the library 'Button_Switch_THT'.
+    Local override; Severity: warning
+    @(119.3800 mm, 140.9700 mm): Footprint S1
+[lib_footprint_issues]: The current configuration does not include the library 'Resistor_THT'.
+    Local override; Severity: warning
+    @(186.6900 mm, 106.6800 mm): Footprint RN4
+[lib_footprint_issues]: The current configuration does not include the library 'LED_THT'.
+    Local override; Severity: warning
+    @(141.6050 mm, 143.5100 mm): Footprint D1
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(100.0000 mm, 153.3400 mm): Line on Edge.Cuts
+    @(100.0000 mm, 100.0000 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(100.0000 mm, 153.3400 mm): Line on Edge.Cuts
+    @(100.0000 mm, 100.0000 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(100.0000 mm, 153.3400 mm): Line on Edge.Cuts
+    @(100.0000 mm, 153.3400 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(100.0000 mm, 100.0000 mm): Line on Edge.Cuts
+    @(197.5360 mm, 100.0000 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(201.6000 mm, 100.0000 mm): Line on Edge.Cuts
+    @(199.0600 mm, 152.0700 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(201.6000 mm, 153.3400 mm): Line on Edge.Cuts
+    @(199.0600 mm, 153.3400 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(201.6000 mm, 100.0000 mm): Line on Edge.Cuts
+    @(201.6000 mm, 115.2400 mm): Line on B.Silkscreen
+[silk_edge_clearance]: Silkscreen clipped by board edge
+    Rule: board setup constraints silk; Severity: warning
+    @(201.6000 mm, 100.0000 mm): Line on Edge.Cuts
+    @(201.6000 mm, 149.5300 mm): Line on B.Silkscreen
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; Severity: error
+    @(119.3800 mm, 134.6200 mm): Footprint RN1
+    @(127.0000 mm, 120.0000 mm): Footprint U1
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; Severity: error
+    @(177.8000 mm, 124.4600 mm): Footprint RN2
+    @(100.0000 mm, 153.3400 mm): Footprint A1
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; Severity: error
+    @(186.6900 mm, 106.6800 mm): Footprint RN4
+    @(100.0000 mm, 153.3400 mm): Footprint A1
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **
